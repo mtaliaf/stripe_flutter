@@ -1,6 +1,6 @@
 name: stripe_flutter
 description: A flutter plugin for stripe.
-version: 0.0.1
+version: 0.0.2
 author: Marquis Taliaferro <marquis.taliaferro@gmail.com>
 homepage: https://github.com/mtaliaf/stripe_flutter
 
