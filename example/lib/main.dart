@@ -11,6 +11,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _cardToken = 'Unknown';
+  String _error = '';
 
   @override
   initState() {
@@ -21,39 +22,46 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     String cardToken;
+    String error;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       cardToken = await StripeFlutter.getCardToken(
-        cardNumber: '4242424242424242',
-        cardExpMonth: 11,
-        cardExpYear: 2020,
-        cardCVC: '123',
-        publishableKey: 'pk_test_9yIYOGqsG8XdzsRUlaKnqkdJ'
-      );
-    } on PlatformException catch(e) {
-      cardToken = e.toString();
+          cardNumber: '4242424242424242',
+          cardExpMonth: 11,
+          cardExpYear: 2020,
+          cardCVC: '123',
+          publishableKey: 'pk_test_9yIYOGqsG8XdzsRUlaKnqkdJ');
+    } on PlatformException catch (e) {
+      error = e.code;
     }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted)
-      return;
+    if (!mounted) return;
 
     setState(() {
-      _cardToken = cardToken;
+      _cardToken = cardToken != null ? cardToken : 'Unknown';
+      _error = error != null ? error : '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Plugin example app'),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Plugin example app'),
         ),
-        body: new Center(
-          child: new Text('Token: $_cardToken\n'),
+        body: Column(
+          children: [
+            Text('Token: $_cardToken\n'),
+            Text(
+              _error,
+              style: TextStyle(color: Colors.red),
+            )
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
         ),
       ),
     );
